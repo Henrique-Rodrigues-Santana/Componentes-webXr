@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.js" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <script type="module">
+        var camera, scene, rederer
+        var mesh
+
+        init()
+        animate()
+
+        function init() {
+            const container = document.createElement('div')
+            document.body.appendChild(container)
+
+            // Todas as cenas three.js precisam de três coisas: uma cena, uma câmera e um renderizador
+            // Para mais informações, leia: https://threejs.org/docs/#manual/en/introduction/Creating-a-scene
+
+            // #1 crie a cena, embora não haja nada nela ainda
+            scene = new THREE.Scene()
+            
+            // #2 cria a câmera
+            // Da documentação: https://threejs.org/docs/#api/en/cameras/PerspectiveCamera
+            // PerspectiveCamera(fov: Number, aspect: Number, near: Number, far: Number)
+            // fov — Campo de visão vertical do frustum da câmera.
+            // aspecto — Proporção do frustum da câmera. o ideal é ultilizar a largura do elemento dividido pela altura, no exemplo usaremos a largura da ária onde o objeto é apresentado dividido pela altura
+            // near — plano de recorte proximo. no webxr as medidas usadas são em metro e no exemplo colocaremos 0.01 para ver tudo que estiver bem proximo a camera
+            // far — plano de recorte distante. no recorte distante queremmos ver o mais distante possivel, nesse caso, 40 metro
+
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight,0.01, 40 )
+    
+            // #3 Escolha um renderizador three.js
+            // Documentação: https://threejs.org/docs/#api/en/renderers/WebGLRenderer
+
+            rederer = new THREE.WebGLRenderer({antialias: true, alpha: true})
+            // esses são valores universais ara todos os aplicativos
+            // corespondente a propoção de pixels em nosso aplicativos
+            rederer.setPixelRatio(window.devicePixelRatio)
+            // agora vamos definir o tamanho da renderização
+            rederer.setSize(window.innerWidth, window.innerHeight)
+            // adicionando o renderizador ao DOM
+            container.appendChild(rederer.domElement)
+
+            // Tudo a seguir são coisas opcionais que queremos adicionar à cena
+
+            // Adiciona uma luz à cena
+            // Documentação: https://threejs.org/docs/index.html#api/en/lights/HemisphereLight
+            // HemisphereLight( cor do céu : Integer, cor de fundo : Integer, intensidade : Float )
+            // skyColor - (opcional) cor hexadecimal do céu. O padrão é 0xffffff.
+            // groundColor - (opcional) cor hexadecimal do chão. O padrão é 0xffffff.
+            // intensidade - (opcional) valor numérico da força/intensidade da luz. O padrão é 1.
+            const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1)
+            // aqui podemos ultilizar outro método de posicionamento 
+            light.position.set(0.5, 1, 0.25)
+            scene.add(light)
+            console.log(light)
+                 
+            // Adiciona uma forma de poliedro à cena
+            // Documentação: https://threejs.org/docs/#api/en/geometries/IcosahedronGeometry
+            // IcosahedronGeometry(raio : Float, detalhe : Integer)
+            // raio — o padrão é 1.
+            // detail — O padrão é 0. Definir isso para um valor maior que 0 adiciona mais vértices, tornando-o não mais um icosaedro. Quando o detalhe é maior que 1, é efetivamente uma esfera.
+            const geometry = new THREE.IcosahedronGeometry(0.1,1)
+            const material = new THREE.MeshPhongMaterial({
+                color: new THREE.Color('rgb(226,35,213)'),
+                shininess: 6,
+                shading: true,
+                transparent: 1,
+                opacity: 0.8
+            })
+            const mesh = new THREE.Mesh(geometry, material)
+            scene.add(mesh)
+            mesh.position.set(0,0, -0.7)
+
+
+            // exemplo de cubo                  // aqui definimos o tamanho do cubo em metros
+            /*const geometry2 = new THREE.BoxGeometry(0.3,0.3,0.3)
+            const material2 = new THREE.MeshBasicMaterial({color:0xe6666})
+            const cubo = new THREE.Mesh(geometry2, material2)
+            scene.add(cubo)
+            // aqui definimos a distancia dele da camera, no caso 1 metro, onde valores negativos estão distanti da camera e positivo proximo
+            // aqui os eixos de coordenadas, no caso z para frente e para tras, y pra cima e para baixo e x pra esquerda e para direita
+            cubo.position.z = -1
+            cubo.position.y = -0.2
+            */
+
+        }
+
+         // criando loop de animação 
+         function animate(){
+                rederer.setAnimationLoop(render)
+            }
+        function render(){
+            rederer.render(scene, camera)
+        }
+
+    </script>
+</body>
+</html>
