@@ -12,15 +12,14 @@
     
 
     <script type="module">
-        // Para iniciar uma cena AR com webXR, podemos usar um botão útil fornecido por three.js
-        // Primeiro temos que importá-lo porque é um módulo javascript
+        
     
         import { ARButton } from 'https://unpkg.com/three@0.126.0/examples/jsm/webxr/ARButton.js';
         
 
 
         var camera, scene, rederer
-        var mesh
+        var mesh, mesh2
 
         init()
         animate()
@@ -38,7 +37,7 @@
             rederer.setPixelRatio(window.devicePixelRatio)
             rederer.setSize(window.innerWidth, window.innerHeight)
 
-            // abilitando o renderizador do WebXR
+            
             rederer.xr.enabled = true
          
             container.appendChild(rederer.domElement)
@@ -47,7 +46,7 @@
             light.position.set(0.5, 1, 0.25)
             scene.add(light)
             
-                 
+            // geometria 1     
             const geometry = new THREE.IcosahedronGeometry(0.1,1)
             const material = new THREE.MeshPhongMaterial({
                 color: new THREE.Color('rgb(226,35,213)'),
@@ -56,16 +55,27 @@
                 transparent: 1,
                 opacity: 0.8
             })
+
+            
             const mesh = new THREE.Mesh(geometry, material)
             scene.add(mesh)
             mesh.position.set(0,0, -0.7)
 
-            // adicionando o botão de AR ao DOM
+             // geometria 2
+             const geometry2 = new THREE.TorusGeometry(0.15,0.05,12,50)
+             const material2 = new THREE.MeshBasicMaterial({
+                color: new THREE.Color('rgb(253,253,150)')
+            })
+            const mesh2 = new THREE.Mesh(geometry2,material2)
+            scene.add(mesh2)
+            mesh2.position.set(0.3,0,-0.7) 
+
+            
             const button = ARButton.createButton(rederer)
             console.log(button)
             document.body.appendChild(button)
 
-           // window.addEventListener('resize', onWindowResize, false)
+           
         }
 
          
